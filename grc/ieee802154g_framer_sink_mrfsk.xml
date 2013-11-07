@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<block>
+  <name>framer_sink_mrfsk</name>
+  <key>ieee802154g_framer_sink_mrfsk</key>
+  <category>IEEE802154G</category>
+  <import>import ieee802154g</import>
+  <make>ieee802154g.framer_sink_mrfsk($target_queue)</make>
+  <param>
+    <name>Target Message Queue</name>
+    <key>target_queue</key>
+    <type>raw</type>
+  </param>
+  <sink>
+    <name>in</name>
+    <type>byte</type>
+  </sink>
+</block>

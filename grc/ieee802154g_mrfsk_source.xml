@@ -1,0 +1,91 @@
+<block>
+  <name>Mrfsk source</name>
+  <key>ieee802154g_mrfsk_source</key>
+  <category>IEEE802154G</category>
+  <import>import ieee802154g</import>
+  <make>ieee802154g.mrfsk_source($num_iterations, $preamble_size, $fec_en, $dw, $crc_type_16, $payload_type, $psdu_len, $delay_bytes)</make>
+  <param>
+    <name>Num_iterations</name>
+    <key>num_iterations</key>
+    <type>int</type>
+  </param>
+  <param>
+    <name>Preamble_size</name>
+    <key>preamble_size</key>
+    <type>int</type>
+  </param>
+  <param>
+    <name>Fec_en</name>
+    <key>fec_en</key>
+    <type>enum</type>
+    <option>
+        <name>uncoded</name>
+        <key>False</key>
+    </option>
+    <option>
+        <name>NRNSC</name>
+        <key>True</key>
+    </option>
+  </param>
+  <param>
+    <name>Dw</name>
+    <key>dw</key>
+    <type>enum</type>
+    <option>
+        <name>On</name>
+        <key>True</key>
+    </option>
+    <option>
+        <name>Off</name>
+        <key>False</key>
+    </option>
+  </param>
+  <param>
+    <name>Crc16</name>
+    <key>crc_type_16</key>
+    <type>enum</type>
+    <option>
+        <name>CRC16</name>
+        <key>True</key>
+    </option>
+    <option>
+        <name>CRC32</name>
+        <key>False</key>
+    </option>
+  </param>
+  <param>
+    <name>Payload_type</name>
+    <key>payload_type</key>
+    <type>enum</type>
+    <option>
+        <name>incrementing byte</name>
+        <key>0</key>
+    </option>
+    <option>
+        <name>PN9</name>
+        <key>1</key>
+    </option>
+    <option>
+        <name>crc test 0x400056</name>
+        <key>2</key>
+    </option>
+    <option>
+        <name>PN9 forever</name>
+        <key>3</key>
+    </option>
+  </param>
+  <param>
+    <name>Psdu_len</name>
+    <key>psdu_len</key>
+    <type>int</type>
+  </param>
+  <param>
+    <name>Delay_bytes</name>
+    <key>delay_bytes</key>
+    <type>int</type>
+  </param>
+  <source>
+    <name>out</name>
+    <type>byte</type>
+  </source>
+</block>

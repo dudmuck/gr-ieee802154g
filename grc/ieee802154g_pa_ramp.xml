@@ -1,0 +1,29 @@
+<block>
+  <name>Pa ramp</name>
+  <key>ieee802154g_pa_ramp</key>
+  <category>IEEE802154G</category>
+  <import>import ieee802154g</import>
+  <make>ieee802154g.pa_ramp($rm, $steps)</make>
+  <callback>set_k($rm)</callback>
+  <callback>set_steps($steps)</callback>
+  <param>
+    <name>Gain</name>
+    <key>rm</key>
+    <value>1.0</value>
+    <type>float</type>
+  </param>
+  <param>
+    <name>Steps</name>
+    <key>steps</key>
+    <value>4</value>
+    <type>int</type>
+  </param>
+  <sink>
+    <name>in</name>
+    <type>complex</type>
+  </sink>
+  <source>
+    <name>out</name>
+    <type>complex</type>
+  </source>
+</block>

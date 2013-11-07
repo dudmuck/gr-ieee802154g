@@ -1,0 +1,20 @@
+<block>
+  <name>Preamble detector</name>
+  <key>ieee802154g_preamble_detector</key>
+  <category>IEEE802154G</category>
+  <import>import ieee802154g</import>
+  <make>ieee802154g.preamble_detector($samples_per_symbol)</make>
+  <param>
+    <name>Samples_per_symbol</name>
+    <key>samples_per_symbol</key>
+    <type>int</type>
+  </param>
+  <sink>
+    <name>in</name>
+    <type>float</type>
+  </sink>
+  <source>
+    <name>out</name>
+    <type>float</type>
+  </source>
+</block>

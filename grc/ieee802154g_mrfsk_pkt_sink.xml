@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<block>
+  <name>mrfsk_pkt_sink</name>
+  <key>ieee802154g_mrfsk_pkt_sink</key>
+  <category>IEEE802154G</category>
+  <import>import ieee802154g</import>
+  <make>ieee802154g.mrfsk_pkt_sink()</make>
+
+  <sink>
+    <name>in</name>
+    <type>byte</type>
+  </sink>
+
+</block>
