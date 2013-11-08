@@ -7,7 +7,7 @@ Build Process
 ==================
 you must have the gnu-radio build environment setup as described http://gnuradio.org/redmine/projects/gnuradio/wiki/BuildGuide
 
-git clone <this repository>
+`git clone <this repository>`
 
 cd gr-ieee802154g
 
