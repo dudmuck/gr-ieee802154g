@@ -15,11 +15,15 @@ you must have the gnu-radio build environment setup as described http://gnuradio
 
 > cd build
 
-cmake ../
-make
-make test
-sudo make install
-sudo ldconfig`
+> cmake ../
+
+> make
+
+> make test
+
+> sudo make install
+
+> sudo ldconfig
 
 
 see example grc files in examples directory, for use with gnuradio-companion.
