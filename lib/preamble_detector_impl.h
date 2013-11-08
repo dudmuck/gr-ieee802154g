@@ -62,7 +62,7 @@ namespace gr {
         int prev_zcu_at;
         int prev_zcd_at;
 
-        void work_2ui(bool first, const float *in);
+        int work_2ui(bool first, const float *in);
 
         float *ui_buf;
         bool ui_buf_new;

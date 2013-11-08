@@ -35,9 +35,9 @@
 
 #include <gnuradio/io_signature.h>
 #include "preamble_detector_impl.h"
-#ifdef P_DEBUG
+//#ifdef P_DEBUG
 #include <stdio.h>
-#endif /* P_DEBUG */
+//#endif /* P_DEBUG */
 
 
 namespace gr {
@@ -114,7 +114,8 @@ namespace gr {
                 ui_buf[idx+sps] = in[idx];
             }
 
-            work_2ui(first, ui_buf);
+            if (work_2ui(first, ui_buf))
+                return -1;
             first = false;
             out[i] = ui_buf[j+int_sample_point_b];
             out[i++] -= f_offset;
@@ -125,7 +126,8 @@ namespace gr {
 
         for (; i < noutput_items; ) {
             if (i < (noutput_items-1)) {
-                work_2ui(first, &in[j]);
+                if (work_2ui(first, &in[j]))
+                    return -1;
                 out[i] = in[j+int_sample_point_a];
                 out[i++] -= f_offset;
                 out[i] = in[j+int_sample_point_b];
@@ -157,7 +159,7 @@ namespace gr {
     } // ..work()
 
     //preamble_detector_impl::work_2ui(bool _first, int *_dbg_num_zeros, const float *in_)
-    void
+    int
     preamble_detector_impl::work_2ui(bool _first, const float *in_)
     {
             int n;
@@ -187,7 +189,7 @@ namespace gr {
             }
 
             if (dbg_num_zeros == sps_x2) {
-                return;   // nothing to do (squelched)
+                return 0;   // nothing to do (squelched)
             }
 
             /*if (_first)*/ {
@@ -202,7 +204,7 @@ namespace gr {
                     // this occurs when work() returns in middle of preamble
                     flipped = true;
 #ifdef P_DEBUG
-                    printf(" [41mFLIP");
+                    printf(" [43mFLIP");
                     printf("zcu@%d(%d) zcd@%d(%d)[0m ", zcu_at, prev_zcu_at, zcd_at, prev_zcd_at);
 #endif /* P_DEBUG */
                     itmp = zcu_at;
@@ -325,16 +327,32 @@ namespace gr {
                 preamble_cnt = 0;
 
             if (preamble_cnt > 3 && zcu_at != -1 && zcd_at != -1) {
-                zcu_sum_cnt++;
-                zcu_sum += zcu_at;
+                //if ( (prev_zcu_at < 1 && zcu_at >= (sps_x2-1)) || (prev_zcu_at > (sps_x2-1) && zcu_at < 1) )
+                if (abs(prev_zcu_at - zcu_at) >= (sps_x2-1)) {
+                    /* zero crossing is straddling edge */
+                    zcu_sum_cnt = 1;
+                    zcu_sum = zcu_at;
+                } else {
+                    zcu_sum_cnt++;
+                    zcu_sum += zcu_at;
+                }
 
-                zcd_sum_cnt++;
-                zcd_sum += zcd_at;
+                //if ( (prev_zcd_at < 1 && zcd_at >= (sps_x2-1)) || (prev_zcd_at > (sps_x2-1) && zcd_at < 1) )
+                if (abs(prev_zcd_at - zcd_at) >= (sps_x2-1)) {
+                    /* zero crossing is straddling edge */
+                    zcd_sum_cnt = 1;
+                    zcd_sum = zcd_at;
+                } else {
+                    zcd_sum_cnt++;
+                    zcd_sum += zcd_at;
+                }
             }
 
             if (preamble_cnt > 6) {
                 float zcu_at_f = zcu_sum / zcu_sum_cnt;
                 float zcd_at_f = zcd_sum / zcd_sum_cnt;
+                float prev_spa = sample_point_a;
+                float prev_spb = sample_point_b;
                 if (zcu_at_f > zcd_at_f) {
                     // zcd_at is first in time
                     if (zcd_at_f < sps_half) {
@@ -366,10 +384,28 @@ namespace gr {
 #endif /* P_DEBUG */
                     }
                 }
+
+#ifdef P_DEBUG
+                float sdiff = fabs(sample_point_a - sample_point_b);
+                if (sdiff < (sps_half-1)) {
+                    printf("\n[41msdiff:%.3f (a%.3f b%.3f) zcu_at_f:%.3f zcd_at_f:%.3f\n", sdiff, sample_point_a, sample_point_b, zcu_at_f, zcd_at_f);
+                    printf("zcu_sum:%.3f zcu_sum_cnt:%d\n", zcu_sum, zcu_sum_cnt);
+                    printf("zcd_sum:%.3f zcd_sum_cnt:%d\n ", zcd_sum, zcd_sum_cnt);
+                    printf("[0m\n");
+                    return -1;
+                }
+                if (prev_spa != sample_point_a) {
+                    printf("[36mnew spa:%.3f->%.3f[0m ", prev_spa, sample_point_a);
+                }
+                if (prev_spb != sample_point_b) {
+                    printf("[36mnew spb:%.3f->%.3f[0m ", prev_spb, sample_point_b);
+                }
+#endif /* P_DEBUG */
+
                 int_sample_point_a = round(sample_point_a);
                 if (int_sample_point_a == sps_x2) {
 #ifdef P_DEBUG
-                    printf("[41mpa-wrap[0m ");
+                    printf("[41mspa-wrap[0m ");
 #endif /* P_DEBUG */
                     int_sample_point_a = 0;
                     int_sample_point_b = sps;
@@ -377,7 +413,7 @@ namespace gr {
                 int_sample_point_b = round(sample_point_b);
                 if (int_sample_point_b == sps_x2) {
 #ifdef P_DEBUG
-                    printf("[41mpb-wrap[0m ");
+                    printf("[41mspb-wrap[0m ");
 #endif /* P_DEBUG */
                     int_sample_point_a = 0;
                     int_sample_point_b = sps;
@@ -414,6 +450,7 @@ namespace gr {
 #ifdef P_DEBUG
             printf("\n");
 #endif /* P_DEBUG */
+        return 0;
     }
 
     float
