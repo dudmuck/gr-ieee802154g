@@ -1,7 +1,7 @@
 <block>
-  <name>Preamble detector</name>
+  <name>FSK Preamble detector</name>
   <key>ieee802154g_preamble_detector</key>
-  <category>IEEE802154G</category>
+  <category>ieee802154g</category>
   <import>import ieee802154g</import>
   <make>ieee802154g.preamble_detector($samples_per_symbol)</make>
   <param>

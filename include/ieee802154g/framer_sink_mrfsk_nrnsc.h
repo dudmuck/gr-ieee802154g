@@ -30,9 +30,13 @@ namespace gr {
   namespace ieee802154g {
 
     /*!
-     * \brief <+description of block+>
+     * \brief MR-FSK NRNSC coded framer
      * \ingroup ieee802154g
      *
+     * \details
+     *  msg_queue.type() is always 1 for FEC coded
+     *  msg_queue.arg1() contains PHR (PHY header)
+     *  msg_queue.arg2() is 1 for good CRC, or 0 for CRC calculation mismatch
      */
     class IEEE802154G_API framer_sink_mrfsk_nrnsc : virtual public gr::sync_block
     {
@@ -40,12 +44,8 @@ namespace gr {
       typedef boost::shared_ptr<framer_sink_mrfsk_nrnsc> sptr;
 
       /*!
-       * \brief Return a shared_ptr to a new instance of ieee802154g::framer_sink_mrfsk_nrnsc.
-       *
-       * To avoid accidental use of raw pointers, ieee802154g::framer_sink_mrfsk_nrnsc's
-       * constructor is in a private implementation
-       * class. ieee802154g::framer_sink_mrfsk_nrnsc::make is the public interface for
-       * creating new instances.
+       * \brief create instance of MR-FSK NRNSC coded framer
+       * \param target_queue the message queue for parsed packets
        */
       static sptr make(msg_queue::sptr target_queue);
     };

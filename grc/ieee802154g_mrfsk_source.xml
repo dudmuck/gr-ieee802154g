@@ -1,7 +1,7 @@
 <block>
-  <name>Mrfsk source</name>
+  <name>MR-FSK Packet Source</name>
   <key>ieee802154g_mrfsk_source</key>
-  <category>IEEE802154G</category>
+  <category>ieee802154g</category>
   <import>import ieee802154g</import>
   <make>ieee802154g.mrfsk_source($num_iterations, $preamble_size, $fec_en, $dw, $crc_type_16, $payload_type, $psdu_len, $delay_bytes)</make>
   <param>
@@ -12,6 +12,7 @@
   <param>
     <name>Preamble_size</name>
     <key>preamble_size</key>
+    <value>4</value>
     <type>int</type>
   </param>
   <param>

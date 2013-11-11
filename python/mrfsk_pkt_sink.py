@@ -29,7 +29,7 @@ DEFAULT_MSGQ_LIMIT = 2
 ####class mrfsk_pkt_sink(gr.sync_block):###
 class mrfsk_pkt_sink(gr.hier_block2):
     """
-    docstring for block mrfsk_pkt_sink
+    MR-FSK packet decoder.  All options are read from received SFD and PHR.
     """
     def __init__(self):
 #        gr.sync_block.__init__(self,

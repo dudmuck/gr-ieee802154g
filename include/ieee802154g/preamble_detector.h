@@ -29,9 +29,13 @@ namespace gr {
   namespace ieee802154g {
 
     /*!
-     * \brief <+description of block+>
+     * \brief Preamble detector for 2-(G)FSK
      * \ingroup ieee802154g
-     *
+     * \details
+     * This decimating block is intended to be driven by quadrature demodulator.
+     * This block outputs to binary slicer.
+     * This block detects 0xaa/0x55 patters on input to establish frequency offset
+     * and bit-phase so optimal sample point is used for output to slicer
      */
     class IEEE802154G_API preamble_detector : virtual public gr::sync_decimator
     {
@@ -39,12 +43,8 @@ namespace gr {
       typedef boost::shared_ptr<preamble_detector> sptr;
 
       /*!
-       * \brief Return a shared_ptr to a new instance of ieee802154g::preamble_detector.
-       *
-       * To avoid accidental use of raw pointers, ieee802154g::preamble_detector's
-       * constructor is in a private implementation
-       * class. ieee802154g::preamble_detector::make is the public interface for
-       * creating new instances.
+       * \brief create new instance of 2-(G)FSK preamble detector
+       * \param samples_per_symbol bit_rate = samp_rate / samples_per_symbol
        */
       static sptr make(int samples_per_symbol);
     };

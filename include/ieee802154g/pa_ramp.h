@@ -29,7 +29,7 @@ namespace gr {
   namespace ieee802154g {
 
     /*!
-     * \brief <+description of block+>
+     * \brief transmit switch, with amplitude pulse shaping
      * \ingroup ieee802154g
      *
      */
@@ -39,24 +39,21 @@ namespace gr {
       typedef boost::shared_ptr<pa_ramp> sptr;
 
       /*!
-       * \brief Return a shared_ptr to a new instance of ieee802154g::pa_ramp.
+       * \brief create a new instance of TX switch
        *
-       * To avoid accidental use of raw pointers, ieee802154g::pa_ramp's
-       * constructor is in a private implementation
-       * class. ieee802154g::pa_ramp::make is the public interface for
-       * creating new instances.
+       * \param  rm     power gain factor during transmit
+       * \param steps   number of samples to ramp between zero power and TX power
        */
       static sptr make(float rm, int steps);
 
       /*!
        * \brief Set the multipication factor during packet transmit
        */
-      //virtual float k(float rm) const = 0;
+      virtual void set_k(float rm) = 0;
 
       /*!
-       * \brief Set the multipication factor during packet transmit
+       * \brief Set the number of samples between zero power and TX power
        */
-      virtual void set_k(float rm) = 0;
       virtual void set_steps(int s) = 0;
     };
 

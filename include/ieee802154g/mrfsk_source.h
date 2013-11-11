@@ -34,22 +34,27 @@ namespace gr {
   namespace ieee802154g {
 
     /*!
-     * \brief <+description of block+>
+     * \brief MR-FSK packet generator
      * \ingroup ieee802154g
      *
+     * \details
+     * This block generates MR-FSK packets compliant to IEEE-802.15.4g-2012.
      */
     class IEEE802154G_API mrfsk_source : virtual public gr::sync_block
     {
      public:
       typedef boost::shared_ptr<mrfsk_source> sptr;
 
-      /*!
-       * \brief Return a shared_ptr to a new instance of ieee802154g::mrfsk_source.
+      /*!  \brief create instance of MR-FSK packet generator
        *
-       * To avoid accidental use of raw pointers, ieee802154g::mrfsk_source's
-       * constructor is in a private implementation
-       * class. ieee802154g::mrfsk_source::make is the public interface for
-       * creating new instances.
+       * \param num_iterations How many packets to sent
+       * \param preamble_size Length of preamble in octets
+       * \param fec_en enables FEC NRNSC encoding
+       * \param dw enables PN9 whitening of PSDU
+       * \param crc_type_16 selects CRC type
+       * \param payload_type content of PSDU payload, see PAYLOAD_* definitions
+       * \param psdu_len length of PSDU in octets (including MFR/CRC)
+       * \param delay_bytes slows rate of packets: length of time between packtes in octets, during which TX power is off
        */
       static sptr make(
         int num_iterations,

@@ -1,7 +1,7 @@
 <block>
   <name>Pa ramp</name>
   <key>ieee802154g_pa_ramp</key>
-  <category>IEEE802154G</category>
+  <category>ieee802154g</category>
   <import>import ieee802154g</import>
   <make>ieee802154g.pa_ramp($rm, $steps)</make>
   <callback>set_k($rm)</callback>
