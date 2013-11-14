@@ -135,7 +135,8 @@ namespace gr {
                 first = false;
                 j += sps_x2;
             } else {
-                out[i++] = in[j+int_sample_point_a];
+                out[i] = in[j+int_sample_point_a];
+                out[i++] -= f_offset;
                 // fill first half of ui_buf
                 for (idx = 0; idx < sps; idx++) {
                     ui_buf[idx] = in[j++];
@@ -158,7 +159,6 @@ namespace gr {
         return noutput_items;
     } // ..work()
 
-    //preamble_detector_impl::work_2ui(bool _first, int *_dbg_num_zeros, const float *in_)
     int
     preamble_detector_impl::work_2ui(bool _first, const float *in_)
     {
@@ -222,11 +222,17 @@ namespace gr {
                     itmp = zcu_sum_cnt;
                     zcu_sum_cnt = zcd_sum_cnt;
                     zcd_sum_cnt = itmp;
+
+                    // if this occurs, were not in preamble
+                    if (preamble_cnt > 0)
+                        preamble_cnt--;
                 }
             } // if first iteration
 
-            mids[mid_idx++] = get_mid(min_val, max_val);
-            if (mid_idx == NUM_MIDS)
+            float prev_mid = mids[mid_idx];
+            mids[mid_idx] = get_mid(min_val, max_val);
+            float fshift = fabs(prev_mid - mids[mid_idx]);
+            if (++mid_idx == NUM_MIDS)
                 mid_idx = 0;
             int mi = mid_idx;
             float sum = 0;
@@ -327,7 +333,6 @@ namespace gr {
                 preamble_cnt = 0;
 
             if (preamble_cnt > 3 && zcu_at != -1 && zcd_at != -1) {
-                //if ( (prev_zcu_at < 1 && zcu_at >= (sps_x2-1)) || (prev_zcu_at > (sps_x2-1) && zcu_at < 1) )
                 if (abs(prev_zcu_at - zcu_at) >= (sps_x2-1)) {
                     /* zero crossing is straddling edge */
                     zcu_sum_cnt = 1;
@@ -337,7 +342,6 @@ namespace gr {
                     zcu_sum += zcu_at;
                 }
 
-                //if ( (prev_zcd_at < 1 && zcd_at >= (sps_x2-1)) || (prev_zcd_at > (sps_x2-1) && zcd_at < 1) )
                 if (abs(prev_zcd_at - zcd_at) >= (sps_x2-1)) {
                     /* zero crossing is straddling edge */
                     zcd_sum_cnt = 1;
@@ -348,78 +352,84 @@ namespace gr {
                 }
             }
 
-            if (preamble_cnt > 6) {
-                float zcu_at_f = zcu_sum / zcu_sum_cnt;
-                float zcd_at_f = zcd_sum / zcd_sum_cnt;
-                float prev_spa = sample_point_a;
-                float prev_spb = sample_point_b;
-                if (zcu_at_f > zcd_at_f) {
-                    // zcd_at is first in time
-                    if (zcd_at_f < sps_half) {
-                        sample_point_a = zcd_at_f + sps_half;
-                        sample_point_b = zcu_at_f + sps_half;
+            /* only update sample point when have preamble with stable center frequency */
+            if (fshift < ((max_val-min_val)/10)) {
+                if (preamble_cnt > 6) {
+                    float zcu_at_f = zcu_sum / zcu_sum_cnt;
+                    float zcd_at_f = zcd_sum / zcd_sum_cnt;
+                    float prev_spa = sample_point_a;
+                    float prev_spb = sample_point_b;
+                    if (zcu_at_f > zcd_at_f) {
+                        // zcd_at is first in time
+                        if (zcd_at_f < sps_half) {
+                            sample_point_a = zcd_at_f + sps_half;
+                            sample_point_b = zcu_at_f + sps_half;
 #ifdef P_DEBUG
-                        printf("SPa:%.2f,%.2f ", sample_point_a, sample_point_b);
+                            printf("SPa:%.2f,%.2f ", sample_point_a, sample_point_b);
 #endif /* P_DEBUG */
+                        } else {
+                            sample_point_a = zcd_at_f - sps_half;
+                            sample_point_b = zcu_at_f - sps_half;
+#ifdef P_DEBUG
+                            printf("SPc:%.2f,%.2f ", sample_point_a, sample_point_b);
+#endif /* P_DEBUG */
+                        }
                     } else {
-                        sample_point_a = zcd_at_f - sps_half;
-                        sample_point_b = zcu_at_f - sps_half;
+                        // zcu_at is first in time
+                        if (zcu_at_f < sps_half) {
+                            sample_point_a = zcu_at_f + sps_half;
+                            sample_point_b = zcd_at_f + sps_half;
 #ifdef P_DEBUG
-                        printf("SPc:%.2f,%.2f ", sample_point_a, sample_point_b);
+                            printf("SPb:%.2f,%.2f ", sample_point_a, sample_point_b);
 #endif /* P_DEBUG */
+                        } else {
+                            sample_point_a = zcu_at_f - sps_half;
+                            sample_point_b = zcd_at_f - sps_half;
+#ifdef P_DEBUG
+                            printf("SPd:%.2f,%.2f ", sample_point_a, sample_point_b);
+#endif /* P_DEBUG */
+                        }
                     }
-                } else {
-                    // zcu_at is first in time
-                    if (zcu_at_f < sps_half) {
-                        sample_point_a = zcu_at_f + sps_half;
-                        sample_point_b = zcd_at_f + sps_half;
-#ifdef P_DEBUG
-                        printf("SPb:%.2f,%.2f ", sample_point_a, sample_point_b);
-#endif /* P_DEBUG */
-                    } else {
-                        sample_point_a = zcu_at_f - sps_half;
-                        sample_point_b = zcd_at_f - sps_half;
-#ifdef P_DEBUG
-                        printf("SPd:%.2f,%.2f ", sample_point_a, sample_point_b);
-#endif /* P_DEBUG */
-                    }
-                }
 
 #ifdef P_DEBUG
-                float sdiff = fabs(sample_point_a - sample_point_b);
-                if (sdiff < (sps_half-1)) {
-                    printf("\n[41msdiff:%.3f (a%.3f b%.3f) zcu_at_f:%.3f zcd_at_f:%.3f\n", sdiff, sample_point_a, sample_point_b, zcu_at_f, zcd_at_f);
-                    printf("zcu_sum:%.3f zcu_sum_cnt:%d\n", zcu_sum, zcu_sum_cnt);
-                    printf("zcd_sum:%.3f zcd_sum_cnt:%d\n ", zcd_sum, zcd_sum_cnt);
-                    printf("[0m\n");
-                    return -1;
-                }
-                if (prev_spa != sample_point_a) {
-                    printf("[36mnew spa:%.3f->%.3f[0m ", prev_spa, sample_point_a);
-                }
-                if (prev_spb != sample_point_b) {
-                    printf("[36mnew spb:%.3f->%.3f[0m ", prev_spb, sample_point_b);
-                }
+                    float sdiff = fabs(sample_point_a - sample_point_b);
+                    if (sdiff < (sps_half-1)) {
+                        printf("\n[41msdiff:%.3f (a%.3f b%.3f) zcu_at_f:%.3f zcd_at_f:%.3f\n", sdiff, sample_point_a, sample_point_b, zcu_at_f, zcd_at_f);
+                        printf("zcu_sum:%.3f zcu_sum_cnt:%d\n", zcu_sum, zcu_sum_cnt);
+                        printf("zcd_sum:%.3f zcd_sum_cnt:%d\n ", zcd_sum, zcd_sum_cnt);
+                        printf("[0m\n");
+                        return -1;
+                    }
+                    if (prev_spa != sample_point_a) {
+                        printf("[36mnew spa:%.3f->%.3f[0m ", prev_spa, sample_point_a);
+                    }
+                    if (prev_spb != sample_point_b) {
+                        printf("[36mnew spb:%.3f->%.3f[0m ", prev_spb, sample_point_b);
+                    }
 #endif /* P_DEBUG */
 
-                int_sample_point_a = round(sample_point_a);
-                if (int_sample_point_a == sps_x2) {
+                    int_sample_point_a = round(sample_point_a);
+                    if (int_sample_point_a == sps_x2) {
 #ifdef P_DEBUG
-                    printf("[41mspa-wrap[0m ");
+                        printf("[41mspa-wrap[0m ");
 #endif /* P_DEBUG */
-                    int_sample_point_a = 0;
-                    int_sample_point_b = sps;
-                }
-                int_sample_point_b = round(sample_point_b);
-                if (int_sample_point_b == sps_x2) {
+                        int_sample_point_a = 0;
+                        int_sample_point_b = sps;
+                    }
+                    int_sample_point_b = round(sample_point_b);
+                    if (int_sample_point_b == sps_x2) {
 #ifdef P_DEBUG
-                    printf("[41mspb-wrap[0m ");
+                        printf("[41mspb-wrap[0m ");
 #endif /* P_DEBUG */
-                    int_sample_point_a = 0;
-                    int_sample_point_b = sps;
-                }
-                f_offset = mid_avg / 2;
-            }
+                        int_sample_point_a = 0;
+                        int_sample_point_b = sps;
+                    }
+                    f_offset = mid_avg;
+                } // ...if (preamble_cnt > 6)
+            } // ..if center frequency stable
+            else if (preamble_cnt > 4)
+                preamble_cnt -= 4; // drifting center frequency
+
 #ifdef P_DEBUG
             printf("min=% .3f@%2d max=% .3f@%2d | % .3f | zcu@%d(%d) zcd@%d(%d) ",
                 min_val, min_val_at, max_val, max_val_at,

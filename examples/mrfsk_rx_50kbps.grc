@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ASCII'?>
 <flow_graph>
-  <timestamp>Mon Nov 11 10:16:36 2013</timestamp>
+  <timestamp>Wed Nov 13 16:42:53 2013</timestamp>
   <block>
     <key>options</key>
     <param>
@@ -64,29 +64,6 @@
     <key>variable</key>
     <param>
       <key>id</key>
-      <value>sps</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>8</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(26, 101)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>id</key>
       <value>samp_rate</value>
     </param>
     <param>
@@ -100,6 +77,29 @@
     <param>
       <key>_coordinate</key>
       <value>(10, 171)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>id</key>
+      <value>sps</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>8</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(26, 101)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -413,61 +413,6 @@
     </param>
   </block>
   <block>
-    <key>variable_slider</key>
-    <param>
-      <key>id</key>
-      <value>lpf_cutoff</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>label</key>
-      <value></value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>35e3</value>
-    </param>
-    <param>
-      <key>min</key>
-      <value>10e3</value>
-    </param>
-    <param>
-      <key>max</key>
-      <value>samp_rate/2</value>
-    </param>
-    <param>
-      <key>num_steps</key>
-      <value>800</value>
-    </param>
-    <param>
-      <key>style</key>
-      <value>wx.SL_HORIZONTAL</value>
-    </param>
-    <param>
-      <key>converver</key>
-      <value>float_converter</value>
-    </param>
-    <param>
-      <key>grid_pos</key>
-      <value></value>
-    </param>
-    <param>
-      <key>notebook</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(391, 396)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
     <key>analog_quadrature_demod_cf</key>
     <param>
       <key>id</key>
@@ -770,61 +715,6 @@
     <param>
       <key>_coordinate</key>
       <value>(841, 8)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>variable_slider</key>
-    <param>
-      <key>id</key>
-      <value>cf</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>label</key>
-      <value></value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>920.8e6</value>
-    </param>
-    <param>
-      <key>min</key>
-      <value>919.6e6</value>
-    </param>
-    <param>
-      <key>max</key>
-      <value>921.6e6</value>
-    </param>
-    <param>
-      <key>num_steps</key>
-      <value>800</value>
-    </param>
-    <param>
-      <key>style</key>
-      <value>wx.SL_HORIZONTAL</value>
-    </param>
-    <param>
-      <key>converver</key>
-      <value>float_converter</value>
-    </param>
-    <param>
-      <key>grid_pos</key>
-      <value>1,0,1,1</value>
-    </param>
-    <param>
-      <key>notebook</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(12, 248)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1598,6 +1488,61 @@
     <param>
       <key>_coordinate</key>
       <value>(123, 167)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>variable_slider</key>
+    <param>
+      <key>id</key>
+      <value>cf</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>920.6e6</value>
+    </param>
+    <param>
+      <key>min</key>
+      <value>919.6e6</value>
+    </param>
+    <param>
+      <key>max</key>
+      <value>921.6e6</value>
+    </param>
+    <param>
+      <key>num_steps</key>
+      <value>800</value>
+    </param>
+    <param>
+      <key>style</key>
+      <value>wx.SL_HORIZONTAL</value>
+    </param>
+    <param>
+      <key>converver</key>
+      <value>float_converter</value>
+    </param>
+    <param>
+      <key>grid_pos</key>
+      <value>1,0,1,1</value>
+    </param>
+    <param>
+      <key>notebook</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(12, 248)</value>
     </param>
     <param>
       <key>_rotation</key>
