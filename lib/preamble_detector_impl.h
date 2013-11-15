@@ -64,9 +64,6 @@ namespace gr {
 
         int work_2ui(bool first, const float *in);
 
-        float *ui_buf;
-        bool ui_buf_new;
-
         int dbg_num_zeros;
 
         bool zcu_forced;

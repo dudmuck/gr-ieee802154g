@@ -59,6 +59,7 @@ namespace gr {
               gr::io_signature::make(1, 1, sizeof(float)), samples_per_symbol),
                 sps(samples_per_symbol)
     {
+        set_output_multiple(2);
         state = STATE_NONE;
         mid_idx = 0;
         s_tol = sps / 4;
@@ -76,9 +77,6 @@ namespace gr {
         sps_half = sps / 2.0;
         sps_x2 = sps * 2;
 
-        ui_buf = (float *) malloc(sizeof(float)*sps_x2);
-        ui_buf_new = false;
-
         int_sample_point_a = sps;
         int_sample_point_b = sps;
 
@@ -93,7 +91,6 @@ namespace gr {
      */
     preamble_detector_impl::~preamble_detector_impl()
     {
-        free(ui_buf);
     }
 
     int
@@ -108,46 +105,15 @@ namespace gr {
         bool first = true;
         int idx;
 
-        if (ui_buf_new) {
-            // fill 2nd half of ui_buf
-            for (idx = 0; idx < sps; idx++) {
-                ui_buf[idx+sps] = in[idx];
-            }
-
-            if (work_2ui(first, ui_buf))
-                return -1;
-            first = false;
-            out[i] = ui_buf[j+int_sample_point_b];
-            out[i++] -= f_offset;
-            j += sps;
-
-            ui_buf_new = false;
-        }
-
         for (; i < noutput_items; ) {
-            if (i < (noutput_items-1)) {
-                if (work_2ui(first, &in[j]))
-                    return -1;
-                out[i] = in[j+int_sample_point_a];
-                out[i++] -= f_offset;
-                out[i] = in[j+int_sample_point_b];
-                out[i++] -= f_offset;
-                first = false;
-                j += sps_x2;
-            } else {
-                out[i] = in[j+int_sample_point_a];
-                out[i++] -= f_offset;
-                // fill first half of ui_buf
-                for (idx = 0; idx < sps; idx++) {
-                    ui_buf[idx] = in[j++];
-                }
-                ui_buf_new = true;
-
-#ifdef P_DEBUG
-                if (dbg_num_zeros < sps_x2)
-                    printf(" odd-exit ");
-#endif /* P_DEBUG */
-            }
+            if (work_2ui(first, &in[j]))
+                return -1;
+            out[i] = in[j+int_sample_point_a];
+            out[i++] -= f_offset;
+            out[i] = in[j+int_sample_point_b];
+            out[i++] -= f_offset;
+            first = false;
+            j += sps_x2;
         } // ..for (int i = 0; i < noutput_items; i++)
 
 #ifdef P_DEBUG
